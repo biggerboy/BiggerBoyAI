@@ -1,6 +1,8 @@
 package com.biggerboy.springaidemo.service;
 
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -10,7 +12,6 @@ import org.springframework.ai.document.DocumentReader;
 import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @Service
 public class VStoreService {
+    final Logger logger = LoggerFactory.getLogger(VStoreService.class);
     @Autowired
     private VectorStore vectorStore;
     @Autowired
@@ -50,7 +52,7 @@ public class VStoreService {
 
         // 检查文档文件是否存在
         if (!documentFile.exists()) {
-            System.out.println("知识库文件不存在: " + DOCUMENT_FILE_PATH);
+            logger.info("知识库文件不存在: " + DOCUMENT_FILE_PATH);
             return;
         }
 
@@ -70,11 +72,6 @@ public class VStoreService {
                 List<Document> chunks = textSplitter.split(documents2);
 
                 vectorStore.add(chunks);
-
-                // Retrieve documents similar to a query
-                List<Document> results = this.vectorStore
-                        .similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
-                System.out.println("Similarity Search Results:" + results);
 
                 // 创建新的标记文件
                 markFile.createNewFile();
