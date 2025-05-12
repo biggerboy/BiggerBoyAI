@@ -52,4 +52,4 @@ public ChatClient chatClient(AiClient aiClient) {
 - 后端SpringBoot工程
 - 前端Vue3工程
 
-（注：本教程已通过SpringAI 0.8.1 + SpringBoot3.2.5验证）
+（注：本教程已通过SpringAI 1.0.0-M8 + SpringBoot 4.0.0验证）
