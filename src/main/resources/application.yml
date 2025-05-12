@@ -3,7 +3,7 @@ spring:
     name: SpringAI-demo
   ai:
     zhipuai:
-      api-key: b042d3d2b01c4a6dbb86e79fee9662c3.EMIYvzIAfXDb8jG6
+      api-key: ${your_API_key}
     vectorstore:
       redis:
         initialize-schema: true
