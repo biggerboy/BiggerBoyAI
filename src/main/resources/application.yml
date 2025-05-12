@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: SpringAI-demo
+  ai:
+    zhipuai:
+      api-key: b042d3d2b01c4a6dbb86e79fee9662c3.EMIYvzIAfXDb8jG6
+    vectorstore:
+      redis:
+        initialize-schema: true
+        index-name: custom-index
+        prefix: custom-prefix
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+
