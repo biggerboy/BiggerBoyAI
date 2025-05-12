@@ -49,7 +49,7 @@ public ChatClient chatClient(AiClient aiClient) {
 
 ▍配套源码
 关注公众号【BiggerBoy】，回复「AI全栈」获取完整工程代码，包含：
-- 后端SpringBoot工程
-- 前端Vue3工程
+- 后端SpringBoot工程：https://github.com/biggerboy/BiggerBoyAI
+- 前端Vue3工程：https://github.com/biggerboy/BiggerBoyAI-front
 
 （注：本教程已通过SpringAI 1.0.0-M8 + SpringBoot 4.0.0验证）
