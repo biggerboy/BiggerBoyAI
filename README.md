@@ -4,7 +4,7 @@
 
 ### 知识回顾与项目亮点
 
-在《Spring AI：Java开发者的智能应用开发指南》技术解析基础上，本次实战项目将实现三大突破：
+在[《Spring AI：Java开发者的智能应用开发指南》](https://mp.weixin.qq.com/s/-lv-1hyJiENdoZG3wVrYEg)技术解析基础上，本次实战项目将实现三大突破：
 
 **1. 全栈架构实现**
 - [x] 后端：基于Spring AI构建智普大模型接入层
