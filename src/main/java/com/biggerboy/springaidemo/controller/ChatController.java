@@ -1,6 +1,6 @@
 package com.biggerboy.springaidemo.controller;
 
-import com.biggerboy.springaidemo.service.VStoreService;
+import com.biggerboy.springaidemo.service.ChatService;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,14 +19,14 @@ public class ChatController {
 
 
     @Autowired
-    private VStoreService vStoreService;
+    private ChatService chatService;
 
     private final ZhiPuAiChatModel chatModel;
+
     @Autowired
     public ChatController(ZhiPuAiChatModel chatModel) {
         this.chatModel = chatModel;
     }
-
 
     /**
      * 生成回复
@@ -35,7 +35,7 @@ public class ChatController {
      * @return
      */
     @GetMapping("/ai/generate")
-    public Map generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) {
+    public Map generate(@RequestParam(value = "message", defaultValue = "给我讲个笑话") String message) {
         // 如果没有匹配的答案，调用AI模型生成回复
         return Map.of("generation", this.chatModel.call(message));
     }
@@ -50,9 +50,9 @@ public class ChatController {
     @GetMapping("/ai/generateStream")
     public SseEmitter generateStream(@RequestParam String message, @RequestParam Boolean local) {
         if (Boolean.FALSE.equals(local)) {
-            return vStoreService.generateStream(message);
+            return chatService.generateStream(message);
         }
-        return vStoreService.generateStreamWithLocal(message);
+        return chatService.generateStreamWithLocal(message);
     }
 
 
