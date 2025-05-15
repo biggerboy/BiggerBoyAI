@@ -65,3 +65,43 @@ public ChatClient chatClient(AiClient aiClient) {
 - 前端Vue3工程：https://github.com/biggerboy/BiggerBoyAI-front
 
 （注：本教程已通过SpringAI 1.0.0-M8 + SpringBoot 4.0.0验证）
+
+------2025年5月15日更新
+
+- 修改Spring Boot版本为3.3.11，原来4.0.0时引入mybatis-plus报错，修改后可正常运行。
+- 引入MySQL数据库，用于存储会话和消息
+- 提供会话列表查询和消息列表查询接口
+- 支持上下文感知的智能回复生成，提升了对话的连贯性和准确性。
+- 支持对话历史管理，用户可以查看和删除历史记录。
+
+实现流程：
+```mermaid
+sequenceDiagram
+    participant 用户
+    participant 后端
+    participant MySQL
+    participant 智普大模型
+    
+    
+    用户 ->> 后端: 查询历史对话列表
+    后端 ->> MySQL: 查询历史对话列表
+    MySQL -->> 后端: 返回对话历史
+    后端 -->> 用户: 返回对话历史
+
+    用户 ->> 后端: 发起对话请求
+    后端 ->> MySQL: 查询对话历史
+    MySQL -->> 后端: 返回对话历史
+
+    后端 ->> 智普大模型: 传对话历史和本次用户消息
+    智普大模型 -->> 后端: 返回回复
+    后端 ->> MySQL: 保存对话消息
+    MySQL -->> 后端: 保存成功
+    后端 ->> 用户: 返回回复
+```
+
+效果：
+![](src/main/resources/static/img/img_1.png)
+
+历史对话和多轮对话展示：
+
+![](src/main/resources/static/img/2-4.gif)

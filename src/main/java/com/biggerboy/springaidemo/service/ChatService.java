@@ -15,6 +15,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
+import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -61,11 +62,9 @@ public class ChatService {
                         chunk -> {
                             try {
                                 String content = chunk.getResult().getOutput().getText();
-                                if (StringUtils.hasText(content)) {
-                                    // 发送消息到客户端
-                                    // 注意这里，我们直接发送 JSON 字符串，让 SseEmitter 自动添加 data: 前缀
-                                    emitter.send(Map.of("content", content));
-                                }
+                                // 发送消息到客户端
+                                // 注意这里，我们直接发送 JSON 字符串，让 SseEmitter 自动添加 data: 前缀
+                                emitter.send(Map.of("content", content));
                             } catch (IOException e) {
                                 emitter.completeWithError(e);
                             }
@@ -86,8 +85,13 @@ public class ChatService {
     public SseEmitter generateStreamWithLocalV2(String userText, Boolean local, String conversationId) {
         SseEmitter emitter = new SseEmitter();
         Conversation conversation = conversationService.createConversation(conversationId);
+        List<ZhiPuAiApi.FunctionTool> tools = new ArrayList<>();
+        tools.add(new ZhiPuAiApi.FunctionTool(ZhiPuAiApi.FunctionTool.Type.FUNCTION, new ZhiPuAiApi.FunctionTool.Function("web_search",
+                "web_search",
+                "{\"enable\":\"True\"}")));
         ZhiPuAiChatOptions chatOptions = ZhiPuAiChatOptions.builder()
                 .temperature(1.0)
+//                .tools(tools)
                 .build();
 
 
@@ -159,11 +163,9 @@ public class ChatService {
                                 chunk -> {
                                     try {
                                         String content = chunk.getResult().getOutput().getText();
-                                        if (StringUtils.hasText(content)) {
-                                            // 发送消息到客户端
-                                            // 注意这里，我们直接发送 JSON 字符串，让 SseEmitter 自动添加 data: 前缀
-                                            emitter.send(Map.of("content", content));
-                                        }
+                                        // 发送消息到客户端
+                                        // 注意这里，我们直接发送 JSON 字符串，让 SseEmitter 自动添加 data: 前缀
+                                        emitter.send(Map.of("content", content));
                                     } catch (IOException e) {
                                         emitter.completeWithError(e);
                                     }
