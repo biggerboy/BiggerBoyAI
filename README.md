@@ -66,7 +66,10 @@ public ChatClient chatClient(AiClient aiClient) {
 
 （注：本教程已通过SpringAI 1.0.0-M8 + SpringBoot 4.0.0验证）
 
-------2025年5月15日更新
+### 更新日志
+#### 支持会话历史上下文感知 
+
+2025年5月15日更新
 
 - 修改Spring Boot版本为3.3.11，原来4.0.0时引入mybatis-plus报错，修改后可正常运行。
 - 引入MySQL数据库，用于存储会话和消息
