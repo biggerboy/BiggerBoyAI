@@ -6,6 +6,7 @@ import com.biggerboy.springaidemo.mapper.ConversationMessageMapper;
 import com.biggerboy.springaidemo.service.ConversationMessageService;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,11 @@ public class ConversationMessageServiceImpl extends ServiceImpl<ConversationMess
         List<ConversationMessage> messages = conversationMessageMapper.selectByConversationId(conversationId);
         List<Message> list = new ArrayList<>();
         messages.forEach(message -> {
-            if ("user".equals(message.getRole())) {
+            if (MessageType.USER.getValue().equals(message.getRole())) {
                 Message userMessage = new UserMessage(message.getContent());
                 list.add(userMessage);
             }
-            if ("assistant".equals(message.getRole())) {
+            if (MessageType.ASSISTANT.getValue().equals(message.getRole())) {
                 Message assistantMessage = new AssistantMessage(message.getContent());
                 list.add(assistantMessage);
             }
