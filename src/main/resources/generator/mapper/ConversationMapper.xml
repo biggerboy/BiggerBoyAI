@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.biggerboy.springaidemo.mapper.ConversationMapper">
+
+    <resultMap id="BaseResultMap" type="com.biggerboy.springaidemo.domain.Conversation">
+            <id property="id" jdbcType="INTEGER" column="id" />
+            <result property="conversationId" jdbcType="VARCHAR" column="request_id" />
+            <result property="createdAt" jdbcType="DATE" column="created_at" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,request_id,created_at
+    </sql>
+</mapper>
