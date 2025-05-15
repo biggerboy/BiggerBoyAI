@@ -1,6 +1,6 @@
 关注公众号【BiggerBoy】，获取更多技术干货！
 
-![BiggerBoy](./src/main/resources/img.png)
+![BiggerBoy](src/main/resources/static/img/img.png)
 
 ### 知识回顾与项目亮点
 
@@ -23,7 +23,19 @@
 - [ ] 多文档格式解析支持
 
 ### 效果抢先看
-（此处可插入系统交互GIF或截图）
+
+启动项目，与AI对话：
+
+![](src/main/resources/static/img/2-1.gif)
+
+无本地知识库时，未掌握的内容无法准确回复：
+
+![](src/main/resources/static/img/2-2.gif)
+
+
+有本地知识库时，AI能准确回复：
+
+![](src/main/resources/static/img/2-3.gif)
 
 ### 开发手记
 一、环境准备
