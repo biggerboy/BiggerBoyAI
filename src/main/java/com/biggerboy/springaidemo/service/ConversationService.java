@@ -12,7 +12,7 @@ import java.util.List;
 */
 public interface ConversationService extends IService<Conversation> {
 
-    Conversation createConversation(String conversationId);
+    Conversation createConversation(String conversationId, String title );
 
     /**
      * 查询对话列表

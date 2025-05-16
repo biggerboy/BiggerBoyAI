@@ -10,8 +10,12 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.content.Content;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
@@ -26,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author BiggerBoy
@@ -42,6 +47,8 @@ public class ChatService {
     private MysqlChatMemoryRepository mysqlChatMemoryRepository;
     @Autowired
     private ConversationService conversationService;
+    @Autowired
+    private ConversationMessageService conversationMessageService;
 
     /**
      * 处理用户输入并通过服务器发送事件（SSE）返回聊天模型的流式响应。
@@ -84,7 +91,7 @@ public class ChatService {
 
     public SseEmitter generateStreamWithLocalV2(String userText, Boolean local, String conversationId) {
         SseEmitter emitter = new SseEmitter();
-        Conversation conversation = conversationService.createConversation(conversationId);
+
         List<ZhiPuAiApi.FunctionTool> tools = new ArrayList<>();
         tools.add(new ZhiPuAiApi.FunctionTool(ZhiPuAiApi.FunctionTool.Type.FUNCTION, new ZhiPuAiApi.FunctionTool.Function("web_search",
                 "web_search",
@@ -98,7 +105,17 @@ public class ChatService {
         List<Advisor> advisors = new ArrayList<>();
         if (local) {
             //使用本地向量存储
-            QuestionAnswerAdvisor questionAnswerAdvisor = new QuestionAnswerAdvisor(vectorStore);
+            PromptTemplate promptTemplate = new PromptTemplate("""
+                    下面是上下文信息，被---------------------包裹
+
+                    ---------------------
+                    {question_answer_context}
+                    ---------------------
+
+                    优先根据上下文回复用户，如果上下文中没有相关内容，不用告知用户你的回答是基于上下文信息还是你自己的知识库，直接根据你所掌握的知识进行回复。
+                    """);
+
+            QuestionAnswerAdvisor questionAnswerAdvisor = QuestionAnswerAdvisor.builder(vectorStore).promptTemplate(promptTemplate).build();
             advisors.add(questionAnswerAdvisor);
         }
         //获取历史对话
@@ -115,7 +132,7 @@ public class ChatService {
         ChatClient.ChatClientRequestSpec chatClientRequestSpec = chatClient.prompt();
 
         chatClientRequestSpec
-                .system("你是一个智能助手，用户会问你问题。如果用户给定的知识库没有相关信息，你需要根据你自己掌握的知识回答，并且不需要在回复的内容中指出这一点。")
+//                .system("你是一个智能助手，用户会问你问题。如果用户给定的知识库没有相关信息，你需要根据你自己掌握的知识回答，并且不需要在回复的内容中指出这一点。")
                 .advisors(advisors)
                 .user(userText)
                 .options(chatOptions)
@@ -141,8 +158,36 @@ public class ChatService {
                                 emitter.complete();
                             }
                         },
-                        () -> emitter.complete());
+                        () -> {
+                            if (conversationService.lambdaQuery().eq(Conversation::getConversationId, conversationId).one() == null) {
+                                List<Message> messages = conversationMessageService.loadMessages(conversationId);
+                                String title = generateConversationTitle(messages);
+                                Conversation conversation = conversationService.createConversation(conversationId, title);
+                            }
+                            emitter.complete();
+                        });
         return emitter;
+    }
+
+    /**
+     * 生成对话标题
+     *
+     * @param messages 对话消息列表
+     * @return 生成的对话标题
+     */
+    private String generateConversationTitle(List<Message> messages) {
+        // 将所有消息拼接成一个字符串
+        String allMessages = messages.stream().map(Content::getText).collect(Collectors.joining(" "));
+
+        // 这里可以添加更复杂的 NLP 处理逻辑，例如使用智普大模型生成标题
+        // 示例调用智普大模型生成标题
+        List<Message> titleMessages = new ArrayList<>();
+        titleMessages.add(new SystemMessage("根据以下对话内容生成一个简洁的标题，不超过30个字"));
+        titleMessages.add(new UserMessage(allMessages));
+
+        String text = this.chatModel.call(new Prompt(titleMessages)).getResult().getOutput().getText();
+        text = text.substring(0, 30);
+        return text;
     }
 
     /**

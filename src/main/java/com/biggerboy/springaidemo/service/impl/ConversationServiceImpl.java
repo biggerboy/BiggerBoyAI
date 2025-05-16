@@ -25,11 +25,13 @@ public class ConversationServiceImpl extends ServiceImpl<ConversationMapper, Con
     private ConversationMapper conversationMapper;
 
     @Override
-    public Conversation createConversation(String conversationId) {
+    public Conversation createConversation(String conversationId, String title) {
         Conversation conversation1 = conversationMapper.selectOne(new LambdaQueryWrapper<Conversation>().eq(Conversation::getConversationId, conversationId));
+        String finalTitle = title;
         conversation1 = Optional.ofNullable(conversation1).orElseGet(() -> {
             Conversation conversation = new Conversation();
             conversation.setConversationId(conversationId);
+            conversation.setTitle(finalTitle);
             conversation.setCreatedAt(new Date());
             conversationMapper.insert(conversation);
             return conversation;

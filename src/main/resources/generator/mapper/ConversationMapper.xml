@@ -7,10 +7,11 @@
     <resultMap id="BaseResultMap" type="com.biggerboy.springaidemo.domain.Conversation">
             <id property="id" jdbcType="INTEGER" column="id" />
             <result property="conversationId" jdbcType="VARCHAR" column="request_id" />
+            <result property="title" jdbcType="VARCHAR" column="title" />
             <result property="createdAt" jdbcType="DATE" column="created_at" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,request_id,created_at
+        id,request_id,title,created_at
     </sql>
 </mapper>
