@@ -1,7 +1,3 @@
-关注公众号【BiggerBoy】，获取更多技术干货！
-
-![BiggerBoy](src/main/resources/static/img/img.png)
-
 ### 知识回顾与项目亮点
 
 在[《Spring AI：Java开发者的智能应用开发指南》](https://mp.weixin.qq.com/s/-lv-1hyJiENdoZG3wVrYEg)技术解析基础上，本次实战项目将实现三大突破：
@@ -108,3 +104,7 @@ sequenceDiagram
 历史对话和多轮对话展示：
 
 ![](src/main/resources/static/img/2-4.gif)
+
+关注公众号【BiggerBoy】，获取更多技术干货！
+
+![BiggerBoy](src/main/resources/static/img/img.png)
